@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Map;
 
 @Controller
 public class TicketController {
@@ -44,7 +45,7 @@ public class TicketController {
     public String storeStoreTicket(Model model,@ModelAttribute(name = "ticket") @Valid TicketEntity ticket, BindingResult bindingResult,Principal principal) {
         if (bindingResult.hasErrors()) {
             return "tickets/storeTicket";
-        };
+        }
         ticket.setUsers(usersService.findByEmail(principal.getName()));
         ticketService.storeTicket(ticket);
         return "redirect:/";
@@ -53,12 +54,16 @@ public class TicketController {
     @RequestMapping(value = "/tickets/edit/{id}", method = RequestMethod.GET)
     public String editTicket(Model model,@PathVariable("id") Long id) {
         // Code here
-        return "redirect:/"; //Remove this line
+        model.addAttribute("ticket",ticketService.findById(id));
+
+        return "tickets/storeTicket";
+
     }
 
     @RequestMapping(value = "/tickets/delete/{id}", method = RequestMethod.GET)
     public String deleteTicket(@PathVariable("id") Long id) {
         // Code here
+        ticketService.deleteById(id);
         return "redirect:/";
     }
 
